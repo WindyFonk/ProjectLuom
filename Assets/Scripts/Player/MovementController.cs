@@ -6,9 +6,10 @@ using UnityEngine.InputSystem.XR;
 public class MovementController : MonoBehaviour
 {
     [Header("Movement")]
-    private float speed = 5f;
+    private float speed;
     public float walkspeed;
     public float runSpeed = 18f;
+    public float crouchSpeed = 8f;
     public Transform orientation;
     public Transform cam;
 
@@ -19,9 +20,12 @@ public class MovementController : MonoBehaviour
     float horizontal;
     float vertical;
 
-    Vector3 moveDirection;
-
     Rigidbody rb;
+    private bool isWalking;
+    private bool isCrouching;
+    Vector3 direction;
+
+    public Animator modelAnimator;
     // Start is called before the first frame update
     void Start()
     {
@@ -36,6 +40,7 @@ public class MovementController : MonoBehaviour
     void Update()
     {
         Move();
+        AnimationController();
     }
 
     private void Move()
@@ -43,9 +48,8 @@ public class MovementController : MonoBehaviour
         horizontal = Input.GetAxisRaw("Horizontal");
         vertical = Input.GetAxisRaw("Vertical");
 
-        moveDirection = orientation.forward * vertical + orientation.right* horizontal;
 
-        Vector3 direction = new Vector3(horizontal, 0, vertical).normalized;
+        direction = new Vector3(horizontal, 0, vertical).normalized;
 
         if (direction.magnitude > 0)
         {
@@ -66,5 +70,31 @@ public class MovementController : MonoBehaviour
         {
             speed = walkspeed;
         }
+
+        if (Input.GetKeyDown(KeyCode.C))
+        {
+            isCrouching = !isCrouching;
+        }
+
+        if (isCrouching)
+        {
+            speed = crouchSpeed;
+        }
+        else
+        {
+            speed = walkspeed;
+        }
+    }
+
+    private void AnimationController()
+    {
+        if (direction != new Vector3(0, 0, 0))
+        {
+            isWalking = true;
+        }
+        else isWalking = false;
+        modelAnimator.SetBool("isWalking", isWalking);
+
+        modelAnimator.SetBool("isCrouching", isCrouching);
     }
 }
