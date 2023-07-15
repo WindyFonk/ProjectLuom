@@ -26,6 +26,8 @@ public class MovementController : MonoBehaviour
     Vector3 direction;
 
     public Animator modelAnimator;
+
+    private bool canControl = true;
     // Start is called before the first frame update
     void Start()
     {
@@ -39,6 +41,11 @@ public class MovementController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+
+        if (!canControl)
+        {
+            return;
+        }
         Move();
         AnimationController();
     }
@@ -59,7 +66,7 @@ public class MovementController : MonoBehaviour
             transform.rotation = Quaternion.Euler(0, angle, 0);
 
             Vector3 forwardDirection = Quaternion.Euler(0,targetAngle,0)*Vector3.forward;
-            rb.AddForce(forwardDirection.normalized * speed, ForceMode.Force);
+            rb.AddForce(forwardDirection.normalized * speed * 100, ForceMode.Force);
         }
 
         if (Input.GetKey(KeyCode.LeftShift))
@@ -96,5 +103,11 @@ public class MovementController : MonoBehaviour
         modelAnimator.SetBool("isWalking", isWalking);
 
         modelAnimator.SetBool("isCrouching", isCrouching);
+    }
+
+    public void setControl(bool canControl)
+    {
+        this.canControl = canControl;
+        GetComponent<Collider>().enabled = canControl;
     }
 }
