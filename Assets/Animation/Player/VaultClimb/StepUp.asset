@@ -20,3 +20,4 @@ MonoBehaviour:
   matchBodyPart: 3
   matchStartTime: 0.3
   matchTargetTime: 0.53
+  matchtWeightMask: {x: 0, y: 1, z: 0}

@@ -18,6 +18,7 @@ public class ParkourAction : ScriptableObject
     [SerializeField] AvatarTarget matchBodyPart;
     [SerializeField] float matchStartTime;
     [SerializeField] float matchTargetTime;
+    [SerializeField] Vector3 matchtWeightMask = new Vector3(0,1,0);
     public Vector3 MatchPosition { get; set; }
     public Quaternion targetRotation { get; set; }
     public bool checkPossible(ObstacleHitData hitData, Transform playerTransform)
@@ -43,5 +44,6 @@ public class ParkourAction : ScriptableObject
     public AvatarTarget MatchBodyPart => matchBodyPart;
     public float MatchStartTime => matchStartTime;
     public float MatchTargetTime => matchTargetTime;
+    public Vector3 MatchtWeightMask => matchtWeightMask;
 
 }

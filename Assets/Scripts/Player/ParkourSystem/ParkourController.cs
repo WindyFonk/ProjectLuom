@@ -20,7 +20,7 @@ public class ParkourController : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetButton("Jump") && !inAction)
+        if (Input.GetButton("Jump") && !inAction && !playerController.isCrouching)
         {
             var hitData = scanner.ObstacleCheck();
 
@@ -59,7 +59,7 @@ public class ParkourController : MonoBehaviour
 
             if (action.RotateToObstacle)
             {
-                transform.rotation = Quaternion.RotateTowards(transform.rotation, action.targetRotation, 500f * Time.deltaTime);
+                transform.rotation = Quaternion.RotateTowards(transform.rotation, action.targetRotation, 300f * Time.deltaTime);
             }
 
             if (action.EnableTargetMatching)
@@ -82,6 +82,6 @@ public class ParkourController : MonoBehaviour
         }
 
         animator.MatchTarget(action.MatchPosition, transform.rotation, action.MatchBodyPart,
-            new MatchTargetWeightMask(new Vector3(0, 1, 0), 0), action.MatchStartTime, action.MatchTargetTime);
+            new MatchTargetWeightMask(action.MatchtWeightMask, 0), action.MatchStartTime, action.MatchTargetTime);
     }
 }
