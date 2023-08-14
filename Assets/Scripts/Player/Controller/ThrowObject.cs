@@ -22,6 +22,8 @@ public class ThrowObject : MonoBehaviour
     Vector3 throwDirection;
     Vector3 lookDirection;
 
+    MakeSound objectSound;
+
     RaycastHit hit;
 
     void Start()
@@ -35,6 +37,7 @@ public class ThrowObject : MonoBehaviour
         checkThrowObject();
         showUIThrow();
         grabAndThrowObject();
+        UIObject();
 
     }
 
@@ -83,9 +86,10 @@ public class ThrowObject : MonoBehaviour
 
     private void grabAndThrowObject()
     {
-        if (Input.GetKeyDown(KeyCode.E) && !isHolding) 
+        if (Input.GetKeyDown(KeyCode.E) && _object && !isHolding) 
         {
             animator.SetTrigger("PickUp");
+            objectSound = _object.GetComponent<MakeSound>();
         }
 
         if (Input.GetKeyDown(KeyCode.R) && isHolding)
@@ -129,6 +133,8 @@ public class ThrowObject : MonoBehaviour
         holdingObject.GetComponent<Rigidbody>().isKinematic = false;
         isHolding = false;
         holdingObject = null;
+        objectSound = null;
+
     }
 
     private void throwObject()
@@ -139,7 +145,9 @@ public class ThrowObject : MonoBehaviour
         holdingObject.GetComponent<Rigidbody>().isKinematic = false;
         holdingObject.GetComponent<Rigidbody>().velocity = throwDirection;
         isHolding = false;
-        holdingObject = null;      
+        holdingObject = null;
+        objectSound.canMakeSound = true;
+        objectSound = null;
     }
 
     private Vector3 CalculateVelocity (Vector3 target, Vector3 origin, float time) { 
@@ -159,5 +167,11 @@ public class ThrowObject : MonoBehaviour
         result.y = Vy;
 
         return result;
+    }
+
+    private void UIObject()
+    {
+        if (!_object) return;
+
     }
 }

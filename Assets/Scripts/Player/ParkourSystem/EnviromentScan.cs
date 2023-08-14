@@ -11,7 +11,6 @@ public class EnviromentScan : MonoBehaviour
     public ObstacleHitData ObstacleCheck()
     {
         var hitData = new ObstacleHitData();
-        RaycastHit hitInfo;
         hitData.forwardHitFound = Physics.Raycast(hipPoint.position, hipPoint.forward, out hitData.forwardHitInfo, distance, obstacleLayer);
 
         Debug.DrawRay(hipPoint.position, hipPoint.forward * distance, (hitData.forwardHitFound) ? Color.red : Color.white);

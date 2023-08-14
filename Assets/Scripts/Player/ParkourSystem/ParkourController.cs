@@ -20,7 +20,7 @@ public class ParkourController : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetButton("Jump") && !inAction && !playerController.isCrouching)
+        if (Input.GetButtonDown("Jump") && !inAction && !playerController.isCrouching)
         {
             var hitData = scanner.ObstacleCheck();
 

@@ -21,26 +21,41 @@ public class EnemyPatrol : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        switch (state)
+        /*switch (state)
         {
             case 0:
                 PatrolState();
                 break;
+            case 1:
+                CheckingState();
+                break;
+        }*/
+
+        if (state == 0)
+        {
+            PatrolState();
+
+        }
+        else if (state== 1)
+        {
+            CheckingState();
         }
 
+        Debug.Log(state);
     }
 
+    //Patrol State
     private void PatrolState()
     {
         if (Vector3.Distance(transform.position, targetDestination) < 2)
         {
-            waypointCircle();
             StartCoroutine(Patrol());
         }
     }
 
     private IEnumerator Patrol()
     {
+        waypointCircle();
         yield return new WaitForSeconds(timeBetweenMove);
         UpdateDestination();
     }
@@ -58,6 +73,21 @@ public class EnemyPatrol : MonoBehaviour
         {
             waypointIndex = 0;
         }
+    }
+
+
+    //Checking State
+    private void CheckingState()
+    {
+        StartCoroutine(CheckLocation());
+    }
+
+    private IEnumerator CheckLocation()
+    {
+        agent.SetDestination(transform.position);
+        yield return new WaitForSeconds(3f);
+        state = 0;
+        UpdateDestination();
     }
 
 }
