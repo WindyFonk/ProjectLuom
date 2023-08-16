@@ -53,15 +53,20 @@ public class MovementController : MonoBehaviour
     public GameObject CinemachineCameraTarget;
 
     private bool canControl = true;
+    private bool canStandUp = true;
 
 
     private ThrowObject throwObject;
+
+    [SerializeField] Collider standingCollider;
+    [SerializeField] Collider crouchingCollider;
+    [SerializeField] Transform headPoint;
     // Start is called before the first frame update
     void Start()
     {
         rb = GetComponent<Rigidbody>();
         speed = walkspeed;
-        isAiming= false;
+        isAiming = false;
 
         /*Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;*/
@@ -102,22 +107,21 @@ public class MovementController : MonoBehaviour
             //Face toward moving direction
             float targetAngle = Mathf.Atan2(direction.x, direction.z) * Mathf.Rad2Deg + cam.eulerAngles.y;
             float angle = Mathf.SmoothDampAngle(transform.eulerAngles.y, targetAngle, ref turnSmoothVelocity, turnSpeed);
-            Vector3 forwardDirection = Quaternion.Euler(0,targetAngle,0)*Vector3.forward;
+            Vector3 forwardDirection = Quaternion.Euler(0, targetAngle, 0) * Vector3.forward;
             rb.AddForce(forwardDirection.normalized * speed * 100, ForceMode.Force);
             transform.rotation = Quaternion.Euler(0, angle, 0);
         }
 
-        if (UnityEngine.Input.GetKey(KeyCode.LeftShift))
+        if (UnityEngine.Input.GetKey(KeyCode.LeftShift) &&!isCrouching)
         {
             isRunning = true;
-
         }
         else
         {
             isRunning = false;
         }
 
-        if (UnityEngine.Input.GetKeyDown(KeyCode.C))
+        if (UnityEngine.Input.GetKeyDown(KeyCode.C) && canStandUp)
         {
             isCrouching = !isCrouching;
         }
@@ -126,16 +130,23 @@ public class MovementController : MonoBehaviour
         {
             isCrouching = false;
         }
-            if (isCrouching)
+
+
+        if (isCrouching)
         {
             speed = crouchSpeed;
+        }
+        else if (isRunning)
+        {
+            speed = runSpeed;
         }
         else
         {
             speed = walkspeed;
         }
 
-        speed = isRunning? runSpeed : walkspeed;
+        standingCollider.enabled = !isCrouching;
+        crouchingCollider.enabled = isCrouching;
 
 
     }
@@ -146,7 +157,7 @@ public class MovementController : MonoBehaviour
         if (true)
         {
             //Don't multiply mouse input by Time.deltaTime;
-            float deltaTimeMultiplier =1.0f;
+            float deltaTimeMultiplier = 1.0f;
 
             _cinemachineTargetYaw += UnityEngine.Input.GetAxis("Mouse X") * deltaTimeMultiplier;
             _cinemachineTargetPitch += UnityEngine.Input.GetAxis("Mouse X") * deltaTimeMultiplier;
@@ -186,7 +197,7 @@ public class MovementController : MonoBehaviour
         {
             Vector3 worldAimTarget = mouseWorldPos;
             worldAimTarget.y = transform.position.y;
-            Vector3 aimDirection = (worldAimTarget- transform.position).normalized;
+            Vector3 aimDirection = (worldAimTarget - transform.position).normalized;
 
             transform.forward = Vector3.Lerp(transform.forward, aimDirection, Time.deltaTime * 20f);
 
@@ -207,6 +218,8 @@ public class MovementController : MonoBehaviour
             transform.position.z);
         Grounded = Physics.CheckSphere(spherePosition, GroundedRadius, GroundLayers,
             QueryTriggerInteraction.Ignore);
+
+        canStandUp = !Physics.Raycast(headPoint.position, transform.up, 20f);
 
         modelAnimator.SetBool("isGrounded", Grounded);
     }
